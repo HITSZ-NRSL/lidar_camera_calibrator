@@ -1,0 +1,14 @@
+<launch>
+    
+    <param name="img_topic" value="/camera/color/image_raw"/>
+    <param name="pc_topic" value="/velodyne_points"/>
+
+    <!-- the frequency of synchronized data -->
+    <param name="frequency" value="10"/>
+
+    <!-- the output path of synchronized data -->
+    <param name="output_path" value="$(env HOME)/tmp/output"/>
+    <node pkg="lidar_camera_calibrator" type="get_sync_data_node" name="get_sync_data_node" output="screen"/>
+
+    <!-- todo: rviz -->
+</launch>

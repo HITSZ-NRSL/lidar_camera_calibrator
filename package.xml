@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>lidar_camera_calibrator</name>
+    <version>0.0.0</version>
+    <description>The lidar_camera_calibrator package</description>
+
+
+    <maintainer email="wyl410922@qq.com">Yanliang Wang</maintainer>
+
+
+    <!-- One license tag required, multiple allowed, one license per tag -->
+    <!-- Commonly used license strings: -->
+    <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+    <license>GPLv3</license>
+
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <depend>roscpp</depend>
+    <depend>sensor_msgs</depend>
+    <depend>cv_bridge</depend>
+    <depend>pcl_ros</depend>
+    <depend>pcl_conversions</depend>
+    <depend>std_msgs</depend>
+
+</package>

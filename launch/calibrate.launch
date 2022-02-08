@@ -1,0 +1,5 @@
+<launch>
+    <arg name="input_path" default="$(find lidar_camera_calibrator)/data/data-sim"/>
+    <node pkg="lidar_camera_calibrator" type="lidar_camera_calibrator" name="lidar_camera_calibrator" output="screen" 
+        args="$(arg input_path)"/>
+</launch>
