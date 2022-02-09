@@ -9,10 +9,10 @@ Hope it helps you.
 - [lidar_camera_calibrator](#lidar_camera_calibrator)
   - [Dependencies](#dependencies)
   - [Build](#build)
+  - [Test](#test)
   - [Usage](#usage)
     - [a. Prepare the Data](#a-prepare-the-data)
     - [b. Calibrate](#b-calibrate)
-  - [Test](#test)
   - [License](#license)
   - [Acknowledgments](#acknowledgments)
 
@@ -46,6 +46,22 @@ Hope it helps you.
 $ mkdir -p ws_calibrator/src && cd ws_calibrator
 $ git clone REPOSITORY_GIT_LINK src/lidar_camera_calibrator 
 $ catkin_make
+```
+
+## Test
+
+We have tested this tool on real and simulated Velodyne-16 and normal cameras, and test data is provided under the `data` folder.
+
+Test video 1(with AprilTag)：[Youtube link](https://youtu.be/uew143NcVQw) , [Bilibili link](https://www.bilibili.com/video/BV1ML4y1s7Rm/)
+
+Test video 2(without AprilTag)：[Youtube link](https://youtu.be/0UBl0rEK3ig)，[Bilibili link](https://www.bilibili.com/video/BV1s34y1y7X9/)
+
+```bash
+# Calibration using a calibration board with AprilTag(Simulation)
+roslaunch lidar_camera_calibrator calibrate.launch 
+
+# Calibration using a calibration board without AprilTag(Real)
+roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lidar_camera_calibrator`/data/data-hitsz 
 ```
 
 ## Usage
@@ -104,10 +120,6 @@ $ catkin_make
 
 ### b. Calibrate
 
-Usage video 1(with AprilTag)：[Youtube link](https://youtu.be/uew143NcVQw) , [Bilibili link](https://www.bilibili.com/video/BV1ML4y1s7Rm/)
-
-Usage video 2(without AprilTag)：[Youtube link](https://youtu.be/0UBl0rEK3ig)，[Bilibili link](https://www.bilibili.com/video/BV1s34y1y7X9/)
-
 <img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
 
 1. Modify the `input_path` in the launch file to the absolute path of the prepared calibration data, then calibrate it according to the above tutorial. 
@@ -122,17 +134,6 @@ Usage video 2(without AprilTag)：[Youtube link](https://youtu.be/0UBl0rEK3ig)�
 
 4. Repeat steps 2 and 3 until each pair of data is processed. Finally, click `calibrate`, and you can see the output of extrinsic parameters in the terminal. The calibration result can be evaluated qualitatively through `next pose` and `previous pose`, and the extrinsic parameter can be saved to config.json with `save result`.
 
-## Test
-
-We have tested this tool on real and simulated Velodyne-16 and normal cameras, and test data is provided under the `data` folder.
-
-```bash
-# Calibration using a calibration board with AprilTag(Simulation)
-roslaunch lidar_camera_calibrator calibrate.launch 
-
-# Calibration using a calibration board without AprilTag(Real)
-roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lidar_camera_calibrator`/data/data-hitsz 
-```
 
 ## License
 

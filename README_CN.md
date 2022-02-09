@@ -7,10 +7,10 @@ lidar_camera_calibrator是一个半自动的，高精度的，基于特征的相
 - [lidar_camera_calibrator(English README)](#lidar_camera_calibratorenglish-readme)
   - [依赖](#依赖)
   - [编译](#编译)
+  - [测试](#测试)
   - [使用](#使用)
     - [a. 准备数据](#a-准备数据)
     - [b. 标定](#b-标定)
-  - [测试](#测试)
   - [许可证](#许可证)
   - [致谢](#致谢)
 ## 依赖
@@ -43,6 +43,22 @@ lidar_camera_calibrator是一个半自动的，高精度的，基于特征的相
 $ mkdir -p ws_calibrator/src && cd ws_calibrator
 $ git clone REPOSITORY_GIT_LINK src/lidar_camera_calibrator 
 $ catkin_make
+```
+
+## 测试
+
+我们在实物和仿真的VLP16与普通RGB相机上进行了测试，并且在`data`文件夹下提供了测试数据。
+
+测试视频1(with AprilTag)：[Youtube链接](https://youtu.be/uew143NcVQw) , [Bilibili链接](https://www.bilibili.com/video/BV1ML4y1s7Rm/)
+
+测试视频2(without ArpilTag)：[Youtube链接](https://youtu.be/0UBl0rEK3ig)，[Bilibili链接](https://www.bilibili.com/video/BV1s34y1y7X9/)
+
+```bash
+# 使用带有AprilTag的标定板标定
+roslaunch lidar_camera_calibrator calibrate.launch 
+
+# 使用不带有AprilTag的标定板标定
+roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lidar_camera_calibrator`/data/data-hitsz 
 ```
 
 ## 使用
@@ -101,10 +117,6 @@ $ catkin_make
 
 ### b. 标定
 
-使用视频1(with AprilTag)：[Youtube链接](https://youtu.be/uew143NcVQw) , [Bilibili链接](https://www.bilibili.com/video/BV1ML4y1s7Rm/)
-
-使用视频2(without ArpilTag)：[Youtube链接](https://youtu.be/0UBl0rEK3ig)，[Bilibili链接](https://www.bilibili.com/video/BV1s34y1y7X9/)
-
 <img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
 
 1. 修改launch文件中input_path为准备好的标定数据的绝对路径，然后参考上面的教程进行标定
@@ -119,17 +131,6 @@ $ catkin_make
 
 4. 重复步骤2和3，直到每组数据都完成选择，最后点击`calibrate`，在终端可以看到外参的输出。通过`next pose`和`previous pose`可以看到标定效果，并且可以`save result`保存外参结果到config.json。
 
-## 测试
-
-我们在实物和仿真的VLP16与普通RGB相机上进行了测试，并且在`data`文件夹下提供了测试数据。
-
-```bash
-# 使用带有AprilTag的标定板标定
-roslaunch lidar_camera_calibrator calibrate.launch 
-
-# 使用不带有AprilTag的标定板标定
-roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lidar_camera_calibrator`/data/data-hitsz 
-```
 
 ## 许可证
 
