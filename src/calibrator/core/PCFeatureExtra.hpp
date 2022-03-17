@@ -107,8 +107,8 @@ Eigen::Matrix4d extractPCFeature(pcl::PointCloud<pcl::PointXYZ>::Ptr _cloud, con
     // print 
     g2o::SE3Quat pose_estimate = pose->estimate();
     if(debug_flag){
-        cout<<"solve time cost = "<<time_used.count()<<" seconds. "<<endl;
-        cout<<"estimated model: \n"<<pose_estimate.to_homogeneous_matrix().matrix()<<endl;
+        cout<< "\033[1;32mPointCloudExtract\033[0m:\t" << "solve time cost = "<<time_used.count()<<" seconds. "<<endl;
+        // cout<< "\033[1;32mPointCloudExtract\033[0m:\t" << "estimated model: \n"<<pose_estimate.to_homogeneous_matrix().matrix()<<endl;
     }
     return pose_estimate.to_homogeneous_matrix();
 }

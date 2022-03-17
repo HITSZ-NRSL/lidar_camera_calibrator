@@ -142,7 +142,7 @@ void getCorners(const cv::Mat& src , cv::Point2d corners_max[] ,double error_fra
     detector.process(src, opticalCenter, detections);
     clock_t end = clock();
     
-    std::cout << "Got " << detections.size() << " detections in "
+    std::cout <<  "\033[1;32mArpilTag\033[0m:\t\t" << "Got " << detections.size() << " detections in "
     << double(end-start)/CLOCKS_PER_SEC << " seconds.\n";
 //        cv::Mat img = family.superimposeDetections(src, detections);
 //        labelAndWaitForKey(win, "Detected", img, ScaleNone, true);
@@ -160,8 +160,8 @@ void getCorners(const cv::Mat& src , cv::Point2d corners_max[] ,double error_fra
             }
 
             clock_t end = clock();
-            std::cout << "Got corners in "
-                      << double(end-start)/CLOCKS_PER_SEC << " seconds.\n";
+            // std::cout << "Got corners in "
+            //           << double(end-start)/CLOCKS_PER_SEC << " seconds.\n";
         }
     }
     return;

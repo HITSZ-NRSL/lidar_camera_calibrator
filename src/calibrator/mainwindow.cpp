@@ -270,8 +270,8 @@ void MainWindow::on_calibrate_clicked()
     double cx = data_reader_->K_.ptr<float>(0)[2];
     double cy = data_reader_->K_.ptr<float>(1)[2];
     T_ =  solvePnPbyG2O(points_2d, points_3d, fx, fy, cx, cy, false);
-    cout << "Calibration is finished with " << valid_data_ids.size() << " pairs of data." << endl;
-    cout << "The calibrated transformation from lidar to cameta is" << endl;
+    cout << "\033[1;32mCalibrationResult\033[0m:\t" << "Calibration is finished with " << valid_data_ids.size() << " pairs of data." << endl;
+    cout << "\033[1;32mCalibrationResult\033[0m:\t" << "The calibrated transformation from lidar to cameta is" << endl;
     cout << T_.matrix() << endl;
     setCursor(Qt::ArrowCursor);
     setEnabledAll(true);

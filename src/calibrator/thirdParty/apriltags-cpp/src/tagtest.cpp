@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
 
     if (opts.show_results) {
       if (opts.show_debug_info) std::cout << "\n";
-      std::cout << "Got " << detections.size() << " detections in "
+      std::cout << "\033[1;32mArpilTag\033[0m:\t\t" <<  "Got " << detections.size() << " detections in "
                 << double(end-start)/CLOCKS_PER_SEC << " seconds.\n";
       for (size_t i=0; i<detections.size(); ++i) {
         const TagDetection& d = detections[i];

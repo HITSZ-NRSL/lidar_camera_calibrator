@@ -103,7 +103,7 @@ PointcloudPolygon::Polygon3D::ConstPtr PointcloudPolygon::Add(
     if(plane_pc_num != indices.size())
     {
         plane_pc_num = indices.size();
-        std::cout<<"current plane points number : "<<plane_pc_num<<std::endl;
+        std::cout<< "\033[1;32mPointCloudExtract\033[0m:\t" << "current plane points number : "<<plane_pc_num<<std::endl;
     }
 
     if(indices.size()){

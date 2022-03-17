@@ -57,8 +57,13 @@ Eigen::Matrix4d solvePnPbyG2O(const Eigen::Matrix3Xd& _points_2d, const Eigen::M
         cout << _points_2d.matrix() << endl;
         cout << _points_3d.matrix() << endl;
     }
-    vector<Point3f> pts_3d;
-    vector<Point2f> pts_2d;
+    vector<Point3f> pts_3d, pts_3d_initial;
+    vector<Point2f> pts_2d, pts_2d_initial;
+    int initial_data_num = min(data_num, 4);
+    for(int i = 0; i < initial_data_num; ++i){
+        pts_3d_initial.emplace_back(_points_3d(0,i), _points_3d(1,i), _points_3d(2,i));
+        pts_2d_initial.emplace_back(_points_2d(0,i), _points_2d(1,i));
+    }
     for(int i = 0; i < data_num; ++i){
         pts_3d.emplace_back(_points_3d(0,i), _points_3d(1,i), _points_3d(2,i));
         pts_2d.emplace_back(_points_2d(0,i), _points_2d(1,i));
@@ -66,8 +71,8 @@ Eigen::Matrix4d solvePnPbyG2O(const Eigen::Matrix3Xd& _points_2d, const Eigen::M
 
 
     Mat K = (Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
-    Mat r, t;
-    solvePnP ( pts_3d, pts_2d, K, Mat(), r, t, false ); 
+    Mat r(3,1,CV_32F), t(3,1,CV_32F);
+    solvePnP ( pts_3d_initial, pts_2d_initial, K, Mat(), r, t, false ); 
     Mat R;
     cv::Rodrigues ( r, R ); 
 
@@ -134,8 +139,8 @@ Eigen::Matrix4d solvePnPbyG2O(const Eigen::Matrix3Xd& _points_2d, const Eigen::M
     if(debug_flag){
         cout<<"initial R="<<endl<<R<<endl;
         cout<<"initial t="<<endl<<t<<endl;
-        cout << "solve time cost = " << time_used.count() << " seconds. " << endl;
-        cout << "estimated model: \n" << pose_estimate.to_homogeneous_matrix().matrix() << endl;
+        cout << "SolvePnP:\t" << "solve time cost = " << time_used.count() << " seconds. " << endl;
+        cout << "SolvePnP:\t" << "estimated model: \n" << pose_estimate.to_homogeneous_matrix().matrix() << endl;
     }
 
     return pose_estimate.to_homogeneous_matrix();
