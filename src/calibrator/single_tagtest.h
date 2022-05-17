@@ -109,7 +109,7 @@ void getInitCorners(const cv::Mat& im , cv::Point2d corners[])
 
 }
 
-bool compareCorners(const cv::Point2d corners1[] ,const cv::Point2d corners2[])
+bool compareCorners(const cv::Point2d corners1[] ,const std::vector<cv::Point2d>& corners2)
 {
     cv::Point2d center1 = ( corners1[0] + corners1[2])/2;
     cv::Point2d distance1_vector = corners1[0] - center1;
@@ -123,7 +123,7 @@ bool compareCorners(const cv::Point2d corners1[] ,const cv::Point2d corners2[])
 
 }
 
-void getCorners(const cv::Mat& src , cv::Point2d corners_max[] ,double error_fraction)
+void getCorners(const cv::Mat& src , std::vector<cv::Point2d>& corners_max ,double error_fraction)
 {
     const std::string family_str = "Tag16h5";
     TagFamily family(family_str);

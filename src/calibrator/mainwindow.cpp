@@ -611,12 +611,17 @@ bool MainWindow::processData(bool is_check)
     last.pc_plane.reset(new pcl::PointCloud<pcl::PointXYZI>);
     auto& ply = last.polygon;
     //img
-    cv::Point2d img_corners[4];
+    std::vector<cv::Point2d> img_corners(4); 
     double error_fraction = 0.5;
     getCorners(*last.img,img_corners,error_fraction);   // extract image corners by detecting AprilTag
     ply.img = std::make_shared<ImagePolygon>(4);
-    if(img_corners[0].x != 0 && img_corners[0].y != 0)
+    if(img_corners[0].x != 0 && img_corners[0].y != 0) // 检测到apriltag 
     {
+        auto compare_rule = [](cv::Point2d p1, cv::Point2d p2){
+            return p1.y < p2.y;// ascending 
+        };
+        std::sort(img_corners.begin(), img_corners.end(), compare_rule);
+        std::swap(img_corners[2],img_corners[3]);// ensure the sequence
         ply.img->InitPolygon(img_corners);
         ply.img->MarkImage(*last.img , *last.img_marked);
         last.img_good = true;
