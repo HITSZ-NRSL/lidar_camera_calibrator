@@ -4,6 +4,8 @@ lidar_camera_calibrator是一个半自动的，高精度的，基于特征的相
 
 希望它对你有所帮助。
 
+<img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
+
 - [lidar_camera_calibrator(English README)](#lidar_camera_calibratorenglish-readme)
   - [依赖](#依赖)
   - [编译](#编译)
@@ -116,8 +118,6 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >```
 
 ### b. 标定
-
-<img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
 
 1. 修改launch文件中input_path为准备好的标定数据的绝对路径，然后参考上面的教程进行标定
 

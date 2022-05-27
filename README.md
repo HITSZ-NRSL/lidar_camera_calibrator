@@ -4,6 +4,8 @@ lidar_camera_calibrator is a semi-automatic, high-precision, feature-based camer
 
 Hope it helps you.
 
+<img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
+
 ([中文说明](./README_CN.md))
 
 - [lidar_camera_calibrator](#lidar_camera_calibrator)
@@ -120,8 +122,6 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >```
 
 ### b. Calibrate
-
-<img src="doc/img/calibrator-sim.gif" style="zoom: 50%;" />
 
 1. Modify the `input_path` in the launch file to the absolute path of the prepared calibration data, then calibrate it according to the above tutorial. 
 
