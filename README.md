@@ -77,7 +77,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
 - Data collection:
 
-  - During data collection, the calibration board should be placed obliquely, and **the left and right points of the board can not be on the same height**.
+  - During data collection, the calibration board should be placed obliquely, and **the left and right points of the board can not be on the same horizontal plane** i.e. **any two points of the four corners can not be on the same altitude.**
 
   - Collect data at different positions, it is recommended to get at least 4 pairs and include both far and near positions, as the following figure shows.
 
@@ -87,7 +87,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
   We provide a script to get soft-synced LiDAR and camera data to calibrate.
 
-  Modify the topic names of Point cloud and image in the `get_sync_data.launch`, and press the `space` button in the terminal to save current synchronized data.
+  Modify **the topic names of Point cloud and image, as well as the output path** in the launch file `get_sync_data.launch`, and press the `space` button in the terminal to save current synchronized data.
 
   ```bash
   $ roslaunch lidar_camera_calibrator get_sync_data.launch
@@ -121,6 +121,8 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >"tf": # the calibrated extrinsic parameters, which need to be saved by 'save result'
   >```
 
+  **Note: Before running the program, the ```tag_size``` must be set according to the calibration board.** Other parameters can be adjusted online while the program is running.
+
 ### b. Calibrate
 
 1. Modify the `input_path` in the launch file to the absolute path of the prepared calibration data, then calibrate it according to the above tutorial. 
@@ -131,7 +133,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
 2. Adjust the parameters in pointcloud control until the appropriate calibration board point cloud appears on the right, and then click `extract`. If the correct feature is extracted in the point cloud, click `next pose`, otherwise click `skip pose`.
 
-3. If the calibration board is with AprilTag, the image control part will automatically extract the corner points. If the detection is wrong or the calibration board is without AprilTag, you need to click `start selection` and then select the four corner points in the image **sequentially**, and finally click ` finish selection`.
+3. If the calibration board is with AprilTag, the image control part will automatically extract the corner points. If the detection is wrong or the calibration board is without AprilTag, you need to click `start selection` and then select the four corner points in the image **sequentially**, and finally click ` finish selection`. **Note: Be sure that the corner IDs shown in the image are consistent with those shown in the lidar points, and the calibration board is completely inside the FOVs of both camera and lidar**
 
 4. Repeat steps 2 and 3 until each pair of data is processed. Finally, click `calibrate`, and you can see the output of extrinsic parameters in the terminal. The calibration result can be evaluated qualitatively through `next pose` and `previous pose`, and the extrinsic parameter can be saved to config.json with `save result`.
 

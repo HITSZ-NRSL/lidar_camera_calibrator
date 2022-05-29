@@ -71,11 +71,11 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
   > 如果标定板上有类似`data/data-sim`中的整张AprilTag码的话，就可以自动地提取图像特征
 
-- 标定数据录制要求：
+- 标定操作要求：
 
-  - 在录制数据过程中标定板要倾斜放置**同时保证左边点和右边点不在一个水平面上**
+  - 在标定过程中标定板要倾斜放置**同时保证左边点和右边点不在一个水平面上！！** **[注意]：4个角点中的任意两个角点都不能在同一水平高度**
 
-  - 在不同位置录制不同的数据，尽可能在四组以上，并且远近位置都包括在内，参考下图
+  - 在不同位置获取对应的图像和点云数据，尽可能在四组以上，并且远近位置都包括在内，参考下图
 
     <img src="doc/img/demo_data.png" alt="demo_data" style="zoom: 50%;" />
 
@@ -83,7 +83,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
   我们提供了获取同步数据的脚本来得到时间软同步的雷达和相机数据
 
-  修改`get_sync_data.launch`中图像和点云的话题名称，通过rviz查看对应的数据，摁空格键来保存当前的同步数据
+  修改`get_sync_data.launch`中**图像和点云的话题名称和存储路径**，然后在终端运行以下命令，通过rviz可视化图像与点云，**在终端**摁空格键来保存当前的同步数据
 
   ```bash
   $ roslaunch lidar_camera_calibrator get_sync_data.launch
@@ -100,13 +100,13 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >"lidar_pose":"descend" #表示lidar相对于相机是倒放的，"descend"表示lidar相对于相机是正放的。
   >"pc": 
   >        "PerspectiveParams": # pcl_viewer视角，不需要修改
-  >        "filter": # 下面参数表示了一个扇环区域，区域内的点会被保留
-  >             "angle_start":  # 扇环区域的起始角度，在界面中可以实时修改
-  >             "angle_size":   # 扇环区域的角度，在界面中可以实时修改
-  >             "min_distance": # 扇环区域的内径，在界面中可以实时修改
-  >             "max_distance": # 扇环区域的外径，在界面中可以实时修改
-  >             "ceil_gap":     # 扇环区域距离点云最高处的距离，在界面中可以实时修改
-  >             "floor_gap":    # 扇环区域距离点云最低处的距离，在界面中可以实时修改
+  >        "filter": # 下面参数设定了一个点云的环形区域，区域内的点会被保留
+  >             "angle_start":  # 环形区域的起始角度，在界面中可以实时修改
+  >             "angle_size":   # 环形区域的角度，在界面中可以实时修改
+  >             "min_distance": # 环形区域的内径，在界面中可以实时修改
+  >             "max_distance": # 环形区域的外径，在界面中可以实时修改
+  >             "ceil_gap":     # 环形区域距离点云最高处的距离，在界面中可以实时修改
+  >             "floor_gap":    # 环形区域距离点云最低处的距离，在界面中可以实时修改
   >             "min_distance_threshold": # min_distance取值的最大阈值
   >             "max_distance_threshold": # max_distance取值的最大阈值
   >             "max_ceil_gap": # ceil_gap取值的最大阈值
@@ -116,6 +116,8 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >"tag_size": # 矩形标定板的长宽高
   >"tf": # 最后标定的外参结果，需要通过save result来保存
   >```
+
+  **这里重点是要在标定前设置好标定板大小```tag_size```，其他参数都可以在运行界面在线调整**
 
 ### b. 标定
 
@@ -127,7 +129,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 
 2. 调整pointcloud control 里面的参数，直到右面出现合适的标定板点云平面，然后点击`extract`。如果在点云中提取到正确的特征，就点`next pose`，否则就`skip pose` 
 
-3. 如果标定板使用apriltag，image control部分会自动检测角点，如果检测错误或者标定板没有apriltag，需要点击 `start selection`然后在图像中**顺序**选择四个角点，最后点击`finish selection`
+3. 如果标定板使用apriltag，image control部分会自动检测角点，如果检测错误或者标定板没有apriltag，需要点击 `start selection`然后在图像中**顺序**选择四个角点，最后点击`finish selection`。**[注意]: 要确保图像中的序号```1234```要与点云中的```1234```对应，并且标定板出现在相机和lidar的fov中。**
 
 4. 重复步骤2和3，直到每组数据都完成选择，最后点击`calibrate`，在终端可以看到外参的输出。通过`next pose`和`previous pose`可以看到标定效果，并且可以`save result`保存外参结果到config.json。
 
