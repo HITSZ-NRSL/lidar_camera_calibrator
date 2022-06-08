@@ -138,7 +138,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
 4. Repeat steps 2 and 3 until each pair of data is processed. Finally, click `calibrate`, and you can see the output of extrinsic parameters in the terminal. The calibration result can be evaluated qualitatively through `next pose` and `previous pose`, and the extrinsic parameter can be saved to config.json with `save result`.
 
 ## TODO
-- [ ] to support online data collection visualized by Rviz and online calibration.
+- [ ] to support online data collection visualized by Rviz and online calibration(replace Qt with rviz plugins and image_view2).
 
 ## License
 
