@@ -22,11 +22,15 @@
 #include <QTimer>
 
 #include <string>
+#include <set>
+#include <unordered_set>
 #include <fstream>
 
 #include "single_tagtest.h"
 #include "core/SolvePnP.hpp"
 #include "core/PCFeatureExtra.hpp"
+
+#include <pcl/common/transforms.h>
 
 MainWindow::MainWindow(int argc, char** argv, QWidget *parent) :
     QMainWindow(parent),
@@ -663,28 +667,29 @@ void MainWindow::setEnabledAll(bool status)
     }
 }
 
-void MainWindow::project(std::shared_ptr<cv::Mat> img_orig, std::shared_ptr<cv::Mat> img_proj, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj)
+void MainWindow::project(std::shared_ptr<cv::Mat> img_orig, std::shared_ptr<cv::Mat> img_proj, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj_cam)
 {
-    assert( img_orig != nullptr && img_proj != nullptr && pc_proj != nullptr );
+    assert( img_orig != nullptr && img_proj != nullptr && pc_proj_cam != nullptr );
 
     const double resolution = 0.1;
     const double depth_min = 1.0;
     const double depth_gap = 10.0;
 
-    uint32_t img_width_ = img_proj->cols;
-    uint32_t img_height_ = img_proj->rows;
+    uint32_t img_width = img_proj->cols;
+    uint32_t img_height = img_proj->rows;
 
     uint32_t  num = static_cast<uint32_t>(depth_gap/resolution);
     Color::rgbs colors = Color::get_rgbs(num);
+    std::unordered_set<int> used_img_idx;
 
-    for(auto& p : pc_proj->points)
+    int occlusion_size = 0;
+    for(auto& p : pc_proj_cam->points)
     {
         Eigen::Vector3d pt;
 
-        pt = K_*(T_*Eigen::Vector4d(p.x, p.y, p.z, 1)).topRows(3);
+        pt = K_ * Eigen::Vector3d(p.x, p.y, p.z);
 
-
-        if(pt(2) < 0.5)
+        if(pt(2) < 0.2)
         {
             continue;
         }
@@ -695,39 +700,59 @@ void MainWindow::project(std::shared_ptr<cv::Mat> img_orig, std::shared_ptr<cv::
         {
             continue;
         }
+        int proj_pixel_id = img_width * v + u;
+        if(used_img_idx.find(proj_pixel_id) != used_img_idx.end()) {
+            p.r = 0xff;
+            p.g = 0;
+            p.b = 0;
+            p.a = 0;
+            p.x = 0;
+            p.y = 0;
+            p.z = 0;
+            occlusion_size++;
+            continue;
+        }
+        used_img_idx.insert(proj_pixel_id);
         cv::Vec3b color = img_orig->at<cv::Vec3b>(cv::Point(u,v));
         p.r = color[2];
         p.g = color[1];
         p.b = color[0];
-
-        double f = std::sqrt(p.x*p.x + p.y*p.y) - depth_min;
+        double f = std::sqrt(p.x*p.x + p.z*p.z) - depth_min;
         uint32_t idx = static_cast<uint32_t>(f/resolution);
         if(idx >= num)
         {
             idx = num -1;
         }
         auto& c = colors[idx];
-        double marker_redius = img_width_/240 ;
+        double marker_redius = img_width/480 ;
+        // img_proj->at<cv::Vec3b>(v, u) = cv::Vec3b(c[0], c[1], c[2]);
         cv::circle(*img_proj, cv::Point2d(u,v), marker_redius, cv::Scalar(c[0], c[1], c[2]), -1);
     }
+    // cout << occlusion_size << endl;
 }
 
 void MainWindow::showCalibrateResult()
 {
     auto& sd = sensor_data_[sid_];
 
-    if(sd.img_proj == nullptr || sd.pc_proj == nullptr)
+    if(sd.img_proj == nullptr || sd.pc_proj == nullptr || sd.pc_proj_cam == nullptr)
     {
         sd.img_proj.reset(new cv::Mat);
         sd.img->copyTo(*sd.img_proj);
         sd.pc_proj.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+        sd.pc_proj_cam.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::copyPointCloud(*sd.pc, *sd.pc_proj);
         for(auto& p: sd.pc_proj->points)
         {
             p.rgba = 0xffffffff;
         }
+        pcl::transformPointCloud(*sd.pc_proj, *sd.pc_proj_cam, T_.cast<float>());
+        sort(sd.pc_proj_cam->points.begin(), sd.pc_proj_cam->points.end(), [](const pcl::PointXYZRGB& p1, const pcl::PointXYZRGB& p2){
+            return (p1.x*p1.x + p1.y*p1.y + p1.z*p1.z) < (p2.x*p2.x + p2.y*p2.y + p2.z*p2.z) ;
+        });
     }
-    project(sd.img, sd.img_proj, sd.pc_proj);
+    project(sd.img, sd.img_proj, sd.pc_proj_cam);
+    pcl::transformPointCloud(*sd.pc_proj_cam, *sd.pc_proj, T_.inverse().cast<float>());
 
     img_viewer_->showImage(sd.img_proj);
     pc_viewer_->showPointcloud(sd.pc_proj , sd.pc_plane);

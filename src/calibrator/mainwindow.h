@@ -153,14 +153,14 @@ private:
         Eigen::Vector4d pc_plane_coef;
         std::vector<Eigen::Vector4d, Eigen::aligned_allocator<Eigen::Vector4d>> corners_3d;
         std::shared_ptr<cv::Mat> img_proj;
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj;
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj, pc_proj_cam;
         Polygon polygon;
 
         SensorData(uint32_t index):img_good(false), pc_good(false), pc_valid(false),
             id(index),
             img(nullptr), pc(nullptr),
             img_marked(nullptr), pc_marked(nullptr),
-            img_proj(nullptr), pc_proj(nullptr), polygon(){}
+            img_proj(nullptr), pc_proj(nullptr), pc_proj_cam(nullptr), polygon(){}
         bool good()
         {
             return (img_good && pc_good);
@@ -203,7 +203,7 @@ private:
     void setEnabledAll(bool status);
     void showCalibrateResult();
     void project(std::shared_ptr<cv::Mat> img_orig, std::shared_ptr<cv::Mat> img_proj,
-                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj);
+                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pc_proj_cam);
 private slots:
     void openConfig(const std::string &config_path);
     void openDataset(const QString &dataset_path);

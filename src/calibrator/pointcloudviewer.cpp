@@ -93,13 +93,13 @@ void PointcloudViewer::showPointcloud(pcl::PointCloud<pcl::PointXYZRGB>::ConstPt
         cloud_names_.insert(index);
         // creat window 1
         viewer_->createViewPort(0.0, 0.0, 0.5, 1.0,v1);  
-        viewer_->setBackgroundColor (0, 0, 0, v1);    
+        viewer_->setBackgroundColor (0.2, 0.2, 0.2, v1);    
         viewer_->addText(cloud1_name, 10, 10, 20, 0 , 0, 1,"v1 text", v1);  
         pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pc1);
         viewer_->addPointCloud<pcl::PointXYZRGB> (pc1, rgb,"sample cloud1", v1);
 
         viewer_->createViewPort(0.5, 0.0, 1.0, 1.0, v2);
-        viewer_->setBackgroundColor (0.3, 0.3, 0.3, v2);
+        viewer_->setBackgroundColor (0.4, 0.4, 0.4, v2);
         viewer_->addText(cloud2_name, 10, 10, 20, 0 , 0, 1,"v2 text", v2);
         viewer_->addPointCloud<pcl::PointXYZI> (pc2, "sample cloud2", v2);
 
