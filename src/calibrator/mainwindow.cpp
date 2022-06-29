@@ -276,10 +276,16 @@ void MainWindow::on_calibrate_clicked()
     T_ =  solvePnPbyG2O(points_2d, points_3d, fx, fy, cx, cy, false);
     cout << "\033[1;32mCalibrationResult\033[0m:\t" << "Calibration is finished with " << valid_data_ids.size() << " pairs of data." << endl;
     cout << "\033[1;32mCalibrationResult\033[0m:\t" << "The calibrated transformation from lidar to camera is:" << endl;
-    cout << T_.matrix() << endl;
+    cout << "Transformation matrix: \n" << T_.matrix() << endl;
+    Eigen::Matrix3d rot_m_l2c =  T_.topLeftCorner(3,3);
+    cout << "Qaternion(qx qy qz qw):\t" << Eigen::Quaterniond(rot_m_l2c).coeffs().transpose() << endl;
+    cout << "Translation(tx ty tz):\t" << T_.topRightCorner(3,1).transpose() << endl;
 
     cout << "\033[1;32mCalibrationResult\033[0m:\t" << "The calibrated transformation from camera to lidar is:" << endl;
-    cout << T_.inverse().matrix() << endl;
+    cout << "Transformation matrix: \n" << T_.inverse().matrix() << endl;
+    Eigen::Matrix3d rot_m_c2l =  T_.inverse().topLeftCorner(3,3);
+    cout << "Qaternion(qx qy qz qw):\t" << Eigen::Quaterniond(rot_m_c2l).coeffs().transpose() << endl;
+    cout << "Translation(tx ty tz):\t" << T_.inverse().topRightCorner(3,1).transpose() << endl;
 
     setCursor(Qt::ArrowCursor);
     setEnabledAll(true);
