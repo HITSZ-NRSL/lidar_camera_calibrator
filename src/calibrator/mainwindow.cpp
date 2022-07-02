@@ -31,6 +31,7 @@
 #include "core/PCFeatureExtra.hpp"
 
 #include <pcl/common/transforms.h>
+#include <pcl/filters/voxel_grid.h>
 
 MainWindow::MainWindow(int argc, char** argv, QWidget *parent) :
     QMainWindow(parent),
@@ -617,6 +618,26 @@ bool MainWindow::processData(bool is_check)
         sensor_data_.pop_back();
         QMessageBox::warning(this, tr("Error"), tr("Fail to read pointcloud!"));
         return false;
+    }
+    // filter
+    if(last.pc->size() > 1000000) { // voxel grid downsample if the pc has very much points;  
+        pcl::VoxelGrid<pcl::PointXYZI> vg_filter;
+        vg_filter.setLeafSize(0.02, 0.02, 0.02);
+        vg_filter.setInputCloud(last.pc);
+        vg_filter.filter(*last.pc);
+    }
+    const double MIN_RADIUS = 1, MAX_RADIUS = 18;
+    {
+        auto tmp_pc = *last.pc;
+        last.pc->clear(); 
+        for(const auto& p : tmp_pc.points) {
+            double curr_dist = p.x * p.x + p.y * p.y + p.z * p.z;
+            if(curr_dist <= MIN_RADIUS * MIN_RADIUS 
+                || curr_dist >= MAX_RADIUS * MAX_RADIUS) {
+                continue;
+            }
+            last.pc->push_back(p);
+        }
     }
 
     last.img_marked = std::make_shared<cv::Mat>();
