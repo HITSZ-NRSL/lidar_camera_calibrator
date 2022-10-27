@@ -140,7 +140,14 @@ void MainWindow::on_extract_clicked(){
         auto compare_rule = [](Eigen::Vector4d p1, Eigen::Vector4d p2){
             return p1.z() > p2.z();// Descending
         };
-        std::sort(last.corners_3d.begin(), last.corners_3d.end(), compare_rule);
+        static std::string lidar_pose = js_["lidar_pose"];
+        if(lidar_pose == "ascend") {
+            std::sort(last.corners_3d.rbegin(), last.corners_3d.rend(), compare_rule);
+        } else if(lidar_pose == "descend") {
+            std::sort(last.corners_3d.begin(), last.corners_3d.end(), compare_rule);
+        } else {
+            assert(0 && "Invalid Lidar Pose Setting.");
+        }
         std::swap(last.corners_3d[2], last.corners_3d[3]);
         // visualize the four corners
         pc_viewer_->showPointcloud(last.pc_marked , last.pc_plane, last.corners_3d);

@@ -97,7 +97,7 @@ roslaunch lidar_camera_calibrator calibrate.launch input_path:=`rospack find lid
   >
   >```yaml
   >"cam": #相机内参
-  >"lidar_pose":"descend" #表示lidar相对于相机是倒放的，"descend"表示lidar相对于相机是正放的。
+  >"lidar_pose":"descend" #ascend表示lidar相对于相机是倒放的，"descend"表示lidar相对于相机是正放的。
   >"pc": 
   >        "PerspectiveParams": # pcl_viewer视角，不需要修改
   >        "filter": # 下面参数设定了一个点云的环形区域，区域内的点会被保留
