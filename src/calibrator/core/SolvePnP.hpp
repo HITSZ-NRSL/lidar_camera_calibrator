@@ -72,7 +72,7 @@ Eigen::Matrix4d solvePnPbyG2O(const Eigen::Matrix3Xd& _points_2d, const Eigen::M
 
     Mat K = (Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
     Mat r(3,1,CV_32F), t(3,1,CV_32F);
-    solvePnP ( pts_3d_initial, pts_2d_initial, K, Mat(), r, t, false ); 
+    solvePnP ( pts_3d_initial, pts_2d_initial, K, Mat(), r, t, false);
     Mat R;
     cv::Rodrigues ( r, R ); 
 

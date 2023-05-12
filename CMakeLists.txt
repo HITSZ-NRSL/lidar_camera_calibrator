@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(lidar_camera_calibrator)
 set(CMAKE_BUILD_TYPE "release") 
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3")
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(catkin REQUIRED COMPONENTS 
         roscpp sensor_msgs cv_bridge pcl_ros pcl_conversions std_msgs
@@ -36,4 +35,4 @@ target_link_libraries(get_sync_data_node
 )
 
 # lidar camera calibrator
-add_subdirectory(src/calibrator)
+# add_subdirectory(src/calibrator)

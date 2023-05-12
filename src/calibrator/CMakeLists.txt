@@ -1,11 +1,9 @@
-# set(CMAKE_CXX_STANDARD 14)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# set( CMAKE_BUILD_TYPE "Release" ) # release is important, or the g2o is very slow.
-set(CMAKE_BUILD_TYPE "release")
+project(calibrator)
+cmake_minimum_required(VERSION 3.10.2)
+set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_EXTENSIONS OFF)
-# add_definitions(-std=c++11) # for qt creator
 
-list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/src/calibrator/cmake_modules )
+list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}//cmake_modules )
 # set( EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -126,9 +126,9 @@ bool CQtOpenCVViewerGl::showImage(const cv::Mat& image, bool isInside)
 
 	drawMutex.lock();
 	if (image.channels() == 3)
-		cvtColor(image, mOrigImage, CV_BGR2RGBA);
+		cvtColor(image, mOrigImage, cv::COLOR_BGR2RGBA);
 	else if (image.channels() == 1)
-		cvtColor(image, mOrigImage, CV_GRAY2RGBA);
+		cvtColor(image, mOrigImage, cv::COLOR_GRAY2RGBA);
 	else if (image.channels() == 4)
 		mOrigImage = image;
 	else return false;
