@@ -331,7 +331,7 @@ cv::Mat TagFamily::detectionImage(const TagDetection& det,
   }
 
   cv::Mat W = getWarp(det);
-  cv::warpPerspective(im, dst, W, size, CV_INTER_NN, cv::BORDER_CONSTANT, bgcolor);
+  cv::warpPerspective(im, dst, W, size, cv::INTER_NEAREST, cv::BORDER_CONSTANT, bgcolor);
 
   
 

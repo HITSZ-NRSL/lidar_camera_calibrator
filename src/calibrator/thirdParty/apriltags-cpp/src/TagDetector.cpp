@@ -82,30 +82,30 @@ typedef std::vector< cv::Scalar > ScalarVec;
 static const ScalarVec& getCColors() {
   static ScalarVec ccolors;
   if (ccolors.empty()) {
-    ccolors.push_back(CV_RGB(  0, 255, 255));
-    ccolors.push_back(CV_RGB(255,   0,   0));
-    ccolors.push_back(CV_RGB(  0, 191, 255));
-    ccolors.push_back(CV_RGB(255,  63,   0));
-    ccolors.push_back(CV_RGB(  0, 127, 255));
-    ccolors.push_back(CV_RGB(255, 127,   0));
-    ccolors.push_back(CV_RGB(  0,  63, 255));
-    ccolors.push_back(CV_RGB(255, 191,   0));
-    ccolors.push_back(CV_RGB(  0,   0, 255));
-    ccolors.push_back(CV_RGB(255, 255,   0));
-    ccolors.push_back(CV_RGB( 63,   0, 255));
-    ccolors.push_back(CV_RGB(191, 255,   0));
-    ccolors.push_back(CV_RGB(127,   0, 255));
-    ccolors.push_back(CV_RGB(127, 255,   0));
-    ccolors.push_back(CV_RGB(191,   0, 255));
-    ccolors.push_back(CV_RGB( 63, 255,   0));
-    ccolors.push_back(CV_RGB(255,   0, 255));
-    ccolors.push_back(CV_RGB(  0, 255,   0));
-    ccolors.push_back(CV_RGB(255,   0, 191));
-    ccolors.push_back(CV_RGB(  0, 255,  63));
-    ccolors.push_back(CV_RGB(255,   0, 127));
-    ccolors.push_back(CV_RGB(  0, 255, 127));
-    ccolors.push_back(CV_RGB(255,   0,  63));
-    ccolors.push_back(CV_RGB(  0, 255, 191));
+    ccolors.push_back(cv::Scalar(  0, 255, 255));
+    ccolors.push_back(cv::Scalar(255,   0,   0));
+    ccolors.push_back(cv::Scalar(  0, 191, 255));
+    ccolors.push_back(cv::Scalar(255,  63,   0));
+    ccolors.push_back(cv::Scalar(  0, 127, 255));
+    ccolors.push_back(cv::Scalar(255, 127,   0));
+    ccolors.push_back(cv::Scalar(  0,  63, 255));
+    ccolors.push_back(cv::Scalar(255, 191,   0));
+    ccolors.push_back(cv::Scalar(  0,   0, 255));
+    ccolors.push_back(cv::Scalar(255, 255,   0));
+    ccolors.push_back(cv::Scalar( 63,   0, 255));
+    ccolors.push_back(cv::Scalar(191, 255,   0));
+    ccolors.push_back(cv::Scalar(127,   0, 255));
+    ccolors.push_back(cv::Scalar(127, 255,   0));
+    ccolors.push_back(cv::Scalar(191,   0, 255));
+    ccolors.push_back(cv::Scalar( 63, 255,   0));
+    ccolors.push_back(cv::Scalar(255,   0, 255));
+    ccolors.push_back(cv::Scalar(  0, 255,   0));
+    ccolors.push_back(cv::Scalar(255,   0, 191));
+    ccolors.push_back(cv::Scalar(  0, 255,  63));
+    ccolors.push_back(cv::Scalar(255,   0, 127));
+    ccolors.push_back(cv::Scalar(  0, 255, 127));
+    ccolors.push_back(cv::Scalar(255,   0,  63));
+    ccolors.push_back(cv::Scalar(  0, 255, 191));
   }
   return ccolors;
 }
@@ -380,8 +380,8 @@ void TagDetector::getQuads_MZ(const Images& images,
   std::vector< cv::Vec4i > hierarchy;
 
   cv::findContours(thresh, contours, hierarchy,
-                   CV_RETR_CCOMP,
-                   CV_CHAIN_APPROX_SIMPLE);
+                   cv::RETR_CCOMP,
+                   cv::CHAIN_APPROX_SIMPLE);
 
   END_PROFILE(3, 0);
 
@@ -396,7 +396,7 @@ void TagDetector::getQuads_MZ(const Images& images,
     for (size_t i=0; i<contours.size(); ++i) {
       cv::Scalar color = ccolors[i % ccolors.size() ];
       if (hierarchy[i][3] < 0) {
-        //cv::drawContours( rgbu, contours, i, color, 1, CV_AA );
+        //cv::drawContours( rgbu, contours, i, color, 1, cv::LINE_AA );
         for (size_t j=0; j<contours[i].size(); ++j) {
 
           size_t jj = (j+1) % contours[i].size();
@@ -408,7 +408,7 @@ void TagDetector::getQuads_MZ(const Images& images,
                    (cj+delta)*scl,
                    (cjj+delta)*scl,
                    color,
-                   1, CV_AA);
+                   1, cv::LINE_AA);
         }
       }
     }
@@ -463,7 +463,7 @@ void TagDetector::getQuads_MZ(const Images& images,
 
     for (size_t i=0; i<hulls.size(); ++i) {
       cv::Scalar color = ccolors[i % ccolors.size() ];
-      //cv::drawContours( rgbu, contours, i, color, 1, CV_AA );
+      //cv::drawContours( rgbu, contours, i, color, 1, cv::LINE_AA );
       for (size_t j=0; j<hulls[i].size(); ++j) {
 
         size_t jj = (j+1) % hulls[i].size();
@@ -475,7 +475,7 @@ void TagDetector::getQuads_MZ(const Images& images,
                  (cj+delta)*scl,
                  (cjj+delta)*scl,
                  color,
-                 1, CV_AA);
+                 1, cv::LINE_AA);
 
       }
     }
@@ -766,20 +766,20 @@ void TagDetector::refineQuadL(const Images& images,
       cv::line( small, 
                 (dsegs[i].p+delta)*scl, 
                 (dsegs[i].p+delta+dsegs[i].length*dsegs[i].t)*scl, 
-                color, 1, CV_AA );
+                color, 1, cv::LINE_AA );
 
       cv::line( small, 
                 (quad.p[i]+delta)*scl, 
                 (quad.p[(i+1)%4]+delta)*scl, 
-                color, 2, CV_AA );
+                color, 2, cv::LINE_AA );
 
 
       for (size_t j=0; j<xywarrays[i].size(); ++j) {
         const XYW& pj = xywarrays[i][j];
         at::Point p = (at::Point(pj.x, pj.y) + delta)*scl;
-        cv::line( small, p-lx, p+lx, color, 1, CV_AA);
+        cv::line( small, p-lx, p+lx, color, 1, cv::LINE_AA);
         if (pj.w > 0) {
-          cv::line( small, p-ly, p+ly, color, 1, CV_AA);
+          cv::line( small, p-ly, p+ly, color, 1, cv::LINE_AA);
         }
       }
     }
@@ -1281,7 +1281,7 @@ void TagDetector::getQuads_AT(const Images& images,
       cv::line( rgbu, 
                 scl*at::Point(seg->x0, seg->y0),
                 scl*at::Point(seg->x1, seg->y1),
-                color, 1, CV_AA );
+                color, 1, cv::LINE_AA );
     }
     emitDebugImage(debugWindowName, 
                    5, 0, debugNumberFiles,
@@ -1688,7 +1688,7 @@ void TagDetector::debugShowQuads(const Images& images,
       const Quad& quad = *(quads[i]);
       cv::Scalar color = ccolors[ i % ccolors.size() ];
       for (int j=0; j<4; ++j) {
-        cv::line( rgbu, scl*quad.p[j], scl*quad.p[(j+1)%4], color, 1, CV_AA);
+        cv::line( rgbu, scl*quad.p[j], scl*quad.p[(j+1)%4], color, 1, cv::LINE_AA);
       }
     }
 
@@ -1719,7 +1719,7 @@ void TagDetector::debugShowQuads(const Images& images,
 
       for (int j=0; j<4; ++j) {
         cv::line(big, (quad.p[j]+delta)*scl, (quad.p[(j+1)%4]+delta)*scl, 
-                 CV_RGB(255,0,0), 1, CV_AA);
+                 cv::Scalar(255,0,0), 1, cv::LINE_AA);
       }
 
       emitDebugImage(debugWindowName,
@@ -1970,7 +1970,7 @@ bool TagDetector::decodeQuad(const Images& images,
         cv::Point pk = bpoints[k];
         cv::rectangle(rgbu,
                       pk - delta, pk + delta,
-                      CV_RGB(0,0,0), 1, 4);
+                      cv::Scalar(0,0,0), 1, 4);
           
       }
 
@@ -1978,7 +1978,7 @@ bool TagDetector::decodeQuad(const Images& images,
         cv::Point pk = wpoints[k];
         cv::rectangle(rgbu,
                       pk - delta, pk + delta,
-                      CV_RGB(255,255,255), 1, 4);
+                      cv::Scalar(255,255,255), 1, 4);
       }
 
       if (0) {
