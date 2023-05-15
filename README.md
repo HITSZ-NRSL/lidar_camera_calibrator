@@ -21,35 +21,84 @@ Hope it helps you.
 
 ## Dependencies
 
-- ROS
+- ROS Kinetic/Melodic (optional)
+
+- OpenCV
+  
+  ```bash
+  $ sudo apt install libopencv-dev python3-opencv
+  ```
 
 - Qt 5 (system)
 
+  ```bash
+  $ sudo apt install qt5-qmake qt5-default qtbase5-dev qtbase5-private-dev libqglviewer-dev-qt5
+  ```
+
 - Eigen 3 (3.3+)
 
-- [ceres](https://github.com/ceres-solver/ceres-solver.git)（commit: e51e9b4）
+  ```bash
+  $ sudo apt install libeigen3-dev
+  ```
 
-  > ```bash
-  > # ceres dependencies
-  > $ sudo apt-get install  liblapack-dev libsuitesparse-dev libcxsparse3 libgflags-dev libgoogle-glog-dev libgtest-dev
-  > ```
+- Dependencies in `ext/` (clone with --recursive)
 
-- [g2o](https://github.com/RainerKuemmerle/g2o.git)（tag: 20200410_git）
+	- [ceres](https://github.com/ceres-solver/ceres-solver.git)（commit: e51e9b4)
+	
+	  ```bash
+	  $ sudo apt-get install liblapack-dev libsuitesparse-dev libcxsparse3 libgflags-dev libgoogle-glog-dev libgtest-dev
+	  ```
+	
+	- [g2o](https://github.com/RainerKuemmerle/g2o.git)（tag: 20200410_git）dependencies
+	
+	  ```bash
+	  $ sudo apt-get install libqglviewer-dev-qt5 libsuitesparse-dev libcxsparse3 libcholmod3
+	  ```
+	
+	- [sophus](https://github.com/strasdat/Sophus.git)（commit: 13fb328）
 
-  > ```bash
-  > # g2o dependencies
-  > $ sudo apt-get install qt5-qmake qt5-default libqglviewer-dev-qt5 libsuitesparse-dev libcxsparse3 libcholmod3
-  > ```
+- Misc
 
-- [sophus](https://github.com/strasdat/Sophus.git)（commit: 13fb328）
+  ```bash
+  $ sudo apt install libcairo2-dev libcgal-dev
+  ```
 
 ## Build
 
+#### ROS
+
 ```bash
 $ mkdir -p ws_calibrator/src && cd ws_calibrator
-$ git clone REPOSITORY_GIT_LINK src/lidar_camera_calibrator 
+$ git clone --recursive REPOSITORY_GIT_LINK src/lidar_camera_calibrator 
+$ # Install dependencies in ext/, cmake . && make -j3 && sudo make install, each
 $ catkin_make
 ```
+
+#### Non-ROS
+
+
+```bash
+$ git clone --recursive REPOSITORY_GIT_LINK lidar_camera_calibrator && cd lidar_camera_calibrator
+$ # Install dependencies in ext/, cmake . && make -j3 && sudo make install, each
+$ cd src/calibrator/ && mkdir build && cd build
+$ cmake .. && make -j3 
+```
+
+#### Docker
+
+Build:
+
+```bash
+docker build -f docker/Dockerfile -t calibrator .
+```
+
+Start:
+
+```bash
+docker run -it --entrypoint /bin/bash --privileged --name calibrator --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -h $HOSTNAME -v $HOME/.Xauthority:/home/calibrator/.Xauthority calibrator
+```
+
+Follow [Usage instructions](#usage)
 
 ## Test
 
