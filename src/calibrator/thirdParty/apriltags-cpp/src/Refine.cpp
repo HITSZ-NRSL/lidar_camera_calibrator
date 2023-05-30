@@ -295,7 +295,7 @@ void drawPoint(cv::Mat& m, const at::Point& p,
   //cv::rectangle(m, p-dp, p+dp, color, 1, 4);
   const int shift = 2;
   const int ss = (1 << shift);
-  cv::circle(m, p*ss, sz*ss, color, thickness, CV_AA, shift);
+  cv::circle(m, p*ss, sz*ss, color, thickness, cv::LINE_AA, shift);
 }
 
 void drawArrow(cv::Mat& m, const at::Point& p, const at::Point& g, 
@@ -304,7 +304,7 @@ void drawArrow(cv::Mat& m, const at::Point& p, const at::Point& g,
   const int shift = 2;
   const int ss = (1 << shift);
 
-  cv::line(m, ss*p, ss*(p+g*scl), color, 1, CV_AA, shift);
+  cv::line(m, ss*p, ss*(p+g*scl), color, 1, cv::LINE_AA, shift);
 
 }
 
@@ -364,7 +364,7 @@ cv::Rect boundingRect(const at::Point p[4], const cv::Size& sz) {
 static cv::Mat enlarge(const cv::Mat& image, int scl) {
   cv::Mat big;
   cv::resize(image, big, cv::Size(scl*image.cols, scl*image.rows), 
-             0, 0, CV_INTER_CUBIC);
+             0, 0, cv::INTER_CUBIC);
   return big;
 }
 
@@ -424,7 +424,7 @@ int refineQuad(const cv::Mat& gmat,
 
       debug_delta = at::Point(border-rect.x, border-rect.y);
 
-      cv::cvtColor(gbig, debug_big, CV_GRAY2RGB);
+      cv::cvtColor(gbig, debug_big, cv::COLOR_GRAY2RGB);
       for (int i=0; i<4; ++i) {
         drawPoint(debug_big, (p[i]+debug_delta)*debug_scl, CV_RGB(255,0,0));
       }

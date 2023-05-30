@@ -1,0 +1,9 @@
+[submodule "ext/ceres-solver"]
+	path = ext/ceres-solver
+	url = https://github.com/ceres-solver/ceres-solver.git
+[submodule "ext/g2o"]
+	path = ext/g2o
+	url = https://github.com/RainerKuemmerle/g2o.git
+[submodule "ext/Sophus"]
+	path = ext/Sophus
+	url = https://github.com/strasdat/Sophus.git
