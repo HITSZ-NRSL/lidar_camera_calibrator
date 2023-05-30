@@ -92,10 +92,16 @@ Build:
 docker build -f docker/Dockerfile -t calibrator .
 ```
 
+Permissions:
+
+```bash
+chmod +x docker/entrypoint.sh
+```
+
 Start:
 
 ```bash
-docker run -it --entrypoint /bin/bash --privileged --name calibrator --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -h $HOSTNAME -v $HOME/.Xauthority:/home/calibrator/.Xauthority calibrator
+docker run -it --entrypoint /bin/bash --privileged --name calibrator --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -h $HOSTNAME -v $HOME/.Xauthority:/home/calibrator/.Xauthority -v /dev:/dev -- calibrator
 ```
 
 Follow [Usage instructions](#usage)

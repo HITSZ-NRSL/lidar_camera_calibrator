@@ -32,8 +32,14 @@ USER $user
 ENV HOME $home
 
 # necessary for libg2o_core.so to be found after linking
-RUN echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib:/opt/ros/melodic/lib" >> ~/.bashrc
 RUN echo "export XDG_RUNTIME_DIR=$home/xdg_runtime_dir" >> ~/.bashrc
 
 # xdg
 RUN mkdir $home/xdg_runtime_dir
+
+# ROS entrypoint
+COPY ./docker/entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
+
