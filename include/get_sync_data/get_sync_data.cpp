@@ -8,7 +8,7 @@
  */
 #include "get_sync_data/get_sync_data.h"
 
-using namespace std;
+namespace fs = boost::filesystem;
 
 GetSyncData::GetSyncData(ros::NodeHandle n):
 n_(n),
@@ -20,24 +20,31 @@ idx(0)
     readROSParameters();
 
     // initialization
-    if(access( img_output_path_.c_str(), 0) == -1 ) {
-        string command = "mkdir -p " + img_output_path_;
-        system(command.c_str());
-        if(access( img_output_path_.c_str(), 0) == -1 ) {
+    if (!fs::exists(img_output_path_)) {
+        if (!fs::create_directories(img_output_path_)) {
             ROS_ERROR("Can't make dir: %s", img_output_path_.c_str());
             ros::shutdown();
         }
-    }
-    if(access( pc_output_path_.c_str(), 0) == -1 ) {
-        string command = "mkdir -p " + pc_output_path_;
-        system(command.c_str());
-        if(access( pc_output_path_.c_str(), 0) == -1 ) {
-            ROS_ERROR("Can't make dir: %s", pc_output_path_.c_str());
-            ros::shutdown();
+    } else {
+        if (count_files(img_output_path_) > 0) {
+            ROS_ERROR("img output path contains files! Will not overwrite"); 
+            ros::shutdown();   
         }
     }
 
-    thread_get_char_ = boost::shared_ptr<thread>( new thread( &GetSyncData::getFlag, this) );
+    if (!fs::exists(pc_output_path_)) {
+        if (!fs::create_directories(pc_output_path_)) {
+            ROS_ERROR("Can't make dir: %s", pc_output_path_.c_str());
+            ros::shutdown();
+        }
+    } else {
+        if (count_files(pc_output_path_) > 0) {
+            ROS_ERROR("pc output path contains files! Will not overwrite"); 
+            ros::shutdown();   
+        }
+    }
+
+    thread_get_char_ = boost::shared_ptr<std::thread>( new std::thread( &GetSyncData::getFlag, this) );
     pc_mf_sub_ = pcMFSubPtr( new pcMFSub(n_, pc_topic_, 1) );
     img_mf_sub_ = imgMFSubPtr( new imgMFSub(n_, img_topic_, 1) );
     synchronizer_ = MFSyncPtr( new MFSync(syncPolicy(freq_), *pc_mf_sub_, *img_mf_sub_) );
@@ -45,54 +52,77 @@ idx(0)
 }
 
 void GetSyncData::readROSParameters(){
-    if(ros::param::get("img_topic",img_topic_)){
-        ROS_INFO("Parametes: img_topic(%s)", img_topic_.c_str());
+    if(ros::param::get("img_topic",img_topic_)) {
+        ROS_INFO("Parameters: img_topic(%s)", img_topic_.c_str());
     }
-    if(ros::param::get("pc_topic",pc_topic_)){
-        ROS_INFO("Parametes: pc_topic(%s)", pc_topic_.c_str());
+    if(ros::param::get("pc_topic",pc_topic_)) {
+        ROS_INFO("Parameters: pc_topic(%s)", pc_topic_.c_str());
     }
-    if(ros::param::get("frequency",freq_)){
-        ROS_INFO("Parametes: frequency(%f)", freq_);
+    if(ros::param::get("frequency",freq_)) {
+        ROS_INFO("Parameters: frequency(%f)", freq_);
     }
-    if(ros::param::get("output_path",output_path_)){
-        ROS_INFO("Parametes: output_path(%s)", output_path_.c_str());
+
+    std::string path_str;
+    if(ros::param::get("output_path", path_str)) {
+        ROS_INFO("Parameters: output_path(%s)", path_str.c_str());
+        output_path_ = fs::path(path_str);
     } else {
-        ROS_ERROR("Parametes: output_path is not defined!");
+        ROS_ERROR("Parameters: output_path is not defined!");
         ROS_BREAK();
     }
-    if(output_path_.back() != '/') output_path_.push_back('/');
-    img_output_path_ = output_path_ + "image_orig/";
-    pc_output_path_ = output_path_ + "pointcloud/";
+
+    img_output_path_ = output_path_ / "image_orig";
+    ROS_INFO("Parameters: img_output_path(%s)", img_output_path_.c_str());
+
+    pc_output_path_ = output_path_ / "pointcloud";
+    ROS_INFO("Parameters: pc_output_path(%s)", pc_output_path_.c_str());
+
+    ROS_INFO("Ready. Press 'space' to capture frame");
 }
 
-void GetSyncData::sync_callback(pcMsg::ConstPtr pc, imgMsg::ConstPtr img){
-    // lock_guard<mutex> mu_guard(mu_);
+size_t GetSyncData::count_files(const fs::path& dir) const {
+    size_t count = std::count_if(
+        fs::directory_iterator(dir),
+        fs::directory_iterator(),
+        [](auto& entry) { return fs::is_regular_file(entry); });
+
+    return count;
+}
+
+void GetSyncData::sync_callback(pcMsg::ConstPtr pc, imgMsg::ConstPtr img) {
     switch (flag)
     {
     case ' ':
         {
             ROS_INFO("Get:\npc:\t%f\nimg:\t%f", pc->header.stamp.toSec(), img->header.stamp.toSec());
-            save_img(img, img_output_path_ + to_string(idx) + ".jpg");
-            save_pc(pc, pc_output_path_ + to_string(idx++) + ".pcd");
+
+            auto idx_str = std::to_string(idx);
+            fs::path img_path = img_output_path_ / idx_str;
+            img_path.replace_extension(".jpg"); 
+            save_img(img, img_path.string());
+
+            fs::path pc_path = pc_output_path_ / idx_str;
+            pc_path.replace_extension(".pcd");
+            save_pc(pc, pc_path.string());
             flag = '\0';
+
+            idx++;
             break;
         }
-    
     default:
         {
-            // ROS_INFO("Nothing: \t%f", pc->header.stamp.toSec());
             break;
         }
     }
 
 }
 
-void GetSyncData::save_img(imgMsg::ConstPtr img, const std::string path){
+void GetSyncData::save_img(imgMsg::ConstPtr img, const std::string path) {
     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
     cv::imwrite(path, cv_ptr->image);
 }
 
-void GetSyncData::save_pc(pcMsg::ConstPtr pc, const std::string path){
+void GetSyncData::save_pc(pcMsg::ConstPtr pc, const std::string path) {
     pcl::PCLPointCloud2 pcl_pc2;
     pcl_conversions::toPCL(*pc,pcl_pc2);
     pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZI>);

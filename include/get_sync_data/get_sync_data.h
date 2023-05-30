@@ -22,6 +22,7 @@
 #include <message_filters/sync_policies/approximate_time.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <boost/filesystem.hpp>
 #include "ros/ros.h"
 
 #include <image_transport/image_transport.h>
@@ -51,21 +52,17 @@ private:
     void save_img(imgMsg::ConstPtr img, const std::string path);
     void save_pc(pcMsg::ConstPtr pc, const std::string path);
 
-    void getFlag(){
-        /*
-        f: save current synchronized data
-        */
-        while(ros::ok()){
-            // mu_.lock();
+    size_t count_files(const boost::filesystem::path& directoryPath) const;
+
+    void getFlag() {
+        ros::Rate r(10);
+        while(ros::ok()) {
             flag = getch();
-            // std::cout << "flag: " << flag << std::endl;
-            // mu_.unlock();
-            usleep(100);
+            r.sleep();
         }
     }
 
-    char getch()
-    {
+    char getch() {
         struct termios oldattr, newattr;
         int ch;
         tcgetattr( STDIN_FILENO, &oldattr );
@@ -84,17 +81,15 @@ private:
     MFSyncPtr synchronizer_;
 
     // thread 
-    char flag;
-    std::mutex mu_;  
+    std::atomic<char> flag;
     boost::shared_ptr<std::thread> thread_get_char_;
 
     // param
     std::string img_topic_;
     std::string pc_topic_;
     double freq_;
-    std::string output_path_;
-
-    std::string img_output_path_;
-    std::string pc_output_path_;
-    int idx;
+    boost::filesystem::path output_path_;
+    boost::filesystem::path img_output_path_;
+    boost::filesystem::path pc_output_path_;
+    size_t idx;
 };
